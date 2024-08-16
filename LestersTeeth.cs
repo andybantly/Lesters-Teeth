@@ -68,10 +68,10 @@ namespace Lesters_Teeth
             int nRoll = 0;
             int iRollScore = 0;
             bool bBuela = false;
+            int nMult = ZERO;
             while (bRollLoop)
             {
                 Console.Write(" Roll {0}: ", nRoll + 1);
-                int nMult = ZERO;
                 int iTempScore = 0;
                 m_Dice = new int[6] { 0, 0, 0, 0, 0, 0 };
                 m_Count = new int[6] { 0, 0, 0, 0, 0, 0 };
@@ -103,11 +103,6 @@ namespace Lesters_Teeth
                     Console.WriteLine("Large Straight");
                     nDice = 0;
                     nMult = ZERO;
-
-                    // Needs to be logic to control going on next
-                    // What if I am under 500?
-                    // What if I am over 10000?
-                    // Accepting this as scoring ups the risk rolling forward
                 }
                 else
                 {
@@ -133,11 +128,6 @@ namespace Lesters_Teeth
                             Dice.Add(m_Count[FIVE]);
                         if (m_Count[SIX] == 2)
                             Dice.Add(m_Count[SIX]);
-
-                        // Needs to be logic to control going on next
-                        // What if I am under 500?
-                        // What if I am over 10000?
-                        // Accepting this as scoring ups the risk rolling forward
                     }
                     else
                     {
@@ -253,12 +243,21 @@ namespace Lesters_Teeth
 
                         if (nMult == ZERO)
                         {
+                            // How to strand points to let roll loop know to pick up the extra on the end
+
                             // Eventually have logic to choose 1's or 5's
                             if (m_Count[ONE] > 0 && m_Count[ONE] < 3) // 1s
                             {
                                 iTempScore += m_Count[ONE] * 100;
                                 Console.WriteLine("Roll {0} - 100 - Score {1} - Total {2}", nRoll + 1, m_Count[0] * 100, iTempScore);
                                 nDice -= m_Count[ONE];
+
+                                if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3) // 5s
+                                {
+                                    iTempScore += m_Count[FIVE] * 50;
+                                    Console.WriteLine("Roll {0} - 50 - Score {1} - Total {2}", nRoll + 1, m_Count[0] * 50, iTempScore);
+                                    nDice -= m_Count[FIVE];
+                                }
                             }
                             else if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3) // 5s
                             {
@@ -278,27 +277,35 @@ namespace Lesters_Teeth
                 }
                 else
                 {
-
                     iRollScore += iTempScore;
                     Console.WriteLine("Total Roll Score {0}", iRollScore);
 
-                    // Needs to be logic to control going on next
-                    // What if I am under 500?
-                    // What if I am over 10000?
-                    // Accepting this as scoring ups the risk rolling forward
+                    if (nMult > ZERO)
+                        Console.WriteLine("{0} is the roll multiplier", nMult + 1);
 
                     if (iGameScoreCPU < 500)
                     {
                         if (iGameScoreCPU + iRollScore >= 500)
                         {
+                            int iChance = m_Rnd.Next(1, 101);
                             if (nDice > 0)
                             {
-                                Console.WriteLine("On the board! It's Your turn");
-                                bRollLoop = false;
+                                if (nMult > ZERO)
+                                {
+                                    // Could have 3, 2, or 1 dice left.  Higher multiplier makes higher score. Determine chance of going for it!
+                                    if (nMult == ONE)
+                                    {
+
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("On the board! It's Your turn");
+                                    bRollLoop = false;
+                                }
                             }
                             else
                             {
-                                int iChance = m_Rnd.Next(1, 101);
                                 if (iChance > 75)
                                 {
                                     Console.WriteLine("Going for it, Fresh Teeth!");
@@ -314,9 +321,6 @@ namespace Lesters_Teeth
                     }
                     else
                     {
-                        if (nMult > ZERO)
-                            Console.WriteLine("{0} is the roll multiplier", nMult);
-
                         if (nDice == 0)
                         {
                             Console.WriteLine("Fresh Teeth");

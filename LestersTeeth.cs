@@ -61,7 +61,7 @@ namespace Lesters_Teeth
             return bIs3Pair;
         }
 
-        static int RollCPU(int iGameScoreCPU)
+        static int RollCPU(int iGameScoreCPU, int iCPUID)
         {
             bool bRollLoop = true;
             int nDice = 6;
@@ -340,7 +340,7 @@ namespace Lesters_Teeth
             }
             if (!bBuela)
                 iGameScoreCPU += iRollScore;
-            Console.WriteLine(string.Format("CPU Score {0}\r\n", iGameScoreCPU));
+            Console.WriteLine(string.Format("CPU {0} - Score {1}\r\n", iCPUID, iGameScoreCPU));
             return iGameScoreCPU;
         }
         static void Main(string[] args)
@@ -353,8 +353,11 @@ namespace Lesters_Teeth
             while (bGameLoop)
             {
                 Console.WriteLine("Lesters Teeth\r\n");
-                iGameScoreCPU1 = RollCPU(iGameScoreCPU1);
-                iGameScoreCPU2 = RollCPU(iGameScoreCPU2);
+                iGameScoreCPU1 = RollCPU(iGameScoreCPU1, 1);
+                iGameScoreCPU2 = RollCPU(iGameScoreCPU2, 2);
+
+                Console.WriteLine("CPU {0}: {1} to CPU {2}: {3}\r\n", 1, iGameScoreCPU1, 2, iGameScoreCPU2);
+
                 if (iGameScoreCPU1 >= 10000 || iGameScoreCPU2 >= 10000)
                 {
                     if (iGameScoreCPU1 > iGameScoreCPU2)

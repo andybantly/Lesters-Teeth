@@ -283,19 +283,37 @@ namespace Lesters_Teeth
                     if (nMult > ZERO)
                         Console.WriteLine("{0} is the roll multiplier", nMult + 1);
 
+                    int iChance = m_Rnd.Next(1, 101);
                     if (iGameScoreCPU < 500)
                     {
                         if (iGameScoreCPU + iRollScore >= 500)
                         {
-                            int iChance = m_Rnd.Next(1, 101);
                             if (nDice > 0)
                             {
                                 if (nMult > ZERO)
                                 {
                                     // Could have 3, 2, or 1 dice left.  Higher multiplier makes higher score. Determine chance of going for it!
-                                    if (nMult == ONE)
+                                    if (nMult == ONE || nMult == FIVE || nMult == SIX)
                                     {
+                                        int GT = nMult == ONE ? 80 : (nMult == FIVE ? 90 : 100);
+                                        if ((iChance * nDice) < GT)
+                                        {
+                                            Console.WriteLine("Not going for it! It's Your turn");
+                                            bRollLoop = false;
+                                        }
+                                        else
+                                            Console.WriteLine("Going for it!");
 
+                                    }
+                                    else
+                                    {
+                                        if (iChance < 90)
+                                        {
+                                            Console.WriteLine("Not going for it! It's Your turn");
+                                            bRollLoop = false;
+                                        }
+                                        else
+                                            Console.WriteLine("Going for it!");
                                     }
                                 }
                                 else
@@ -323,8 +341,16 @@ namespace Lesters_Teeth
                     {
                         if (nDice == 0)
                         {
-                            Console.WriteLine("Fresh Teeth");
-                            nDice = 6;
+                            if (iRollScore > 2000)
+                            {
+                                Console.WriteLine("Fresh Teeth, but not going for it. Your turn");
+                                bRollLoop = false;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Fresh Teeth");
+                                nDice = 6;
+                            }
                         }
                         else
                         {

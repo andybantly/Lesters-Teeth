@@ -303,7 +303,6 @@ namespace Lesters_Teeth
                                         }
                                         else
                                             Console.WriteLine("Going for it!");
-
                                     }
                                     else
                                     {
@@ -362,6 +361,9 @@ namespace Lesters_Teeth
                                     bRollLoop = false;
                                 }
                             }
+
+                            if (bRollLoop)
+                                Console.WriteLine("Go Teeth!");
                         }
                         nRoll++;
                     }
@@ -375,28 +377,85 @@ namespace Lesters_Teeth
         }
         static void Main(string[] args)
         {
-            bool bGameLoop = true;
             SeedRng(ref args);
 
-            int iGameScoreCPU1 = 0;
-            int iGameScoreCPU2 = 0;
+            Console.WriteLine("Lesters Teeth\r\n");
+
+            bool bConvert = false;
+            int nPlayers = 0, nCPUs = 0, nPeople = 0;
+            do
+            {
+                Console.Write("Number of players? ");
+                string? strPlayers = Console.ReadLine();
+                bConvert = Int32.TryParse(strPlayers, out nPlayers);
+                if (bConvert)
+                {
+                    if (nPlayers < 2)
+                    {
+                        Console.WriteLine("Not enough players");
+                        bConvert = false;
+                    }
+                    else
+                    {
+                        Console.Write("How many are CPU? ");
+                        string? strCPUs = Console.ReadLine();
+                        bConvert = Int32.TryParse(strCPUs, out nCPUs);
+                        if (!bConvert)
+                            Console.WriteLine("Input error, try again");
+                        else
+                        {
+                            if (nCPUs < 0)
+                            {
+                                Console.WriteLine("There must be 0 or more CPU players");
+                                bConvert = false;
+                            }
+                            else
+                            {
+                                if (nCPUs > nPlayers)
+                                {
+                                    Console.WriteLine("Too many CPUs");
+                                    bConvert = false;
+                                }
+                                else
+                                    nPeople = nPlayers - nCPUs;
+                            }
+                        }
+                    }
+                }
+                else
+                    Console.WriteLine("Input error, try again");
+            } while (!bConvert);
+
+            Console.WriteLine("\r\nStarting order is Player first, CPU second. Good Luck!\r\n");
+
+            int[] PlayerScore = new int[nPlayers];
+
+            bool bGameLoop = true;
             while (bGameLoop)
             {
                 Console.WriteLine("Lesters Teeth\r\n");
-                iGameScoreCPU1 = RollCPU(iGameScoreCPU1, 1);
-                iGameScoreCPU2 = RollCPU(iGameScoreCPU2, 2);
-
-                Console.WriteLine("CPU {0}: {1} to CPU {2}: {3}\r\n", 1, iGameScoreCPU1, 2, iGameScoreCPU2);
-
-                if (iGameScoreCPU1 >= 10000 || iGameScoreCPU2 >= 10000)
+                for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++)
                 {
-                    if (iGameScoreCPU1 > iGameScoreCPU2)
-                        Console.WriteLine(string.Format("CPU 1 Wins! The score is {0} to {1}", iGameScoreCPU1, iGameScoreCPU2));
-                    else if (iGameScoreCPU2 > iGameScoreCPU1)
-                        Console.WriteLine(string.Format("CPU 2 Wins! The score is {0} to {1}", iGameScoreCPU2, iGameScoreCPU1));
+                    if (iPlayer < nPeople)
+                    {
+                        // Player plays here
+                        PlayerScore[iPlayer] = 0;
+                        Console.WriteLine("Player {0}: {1}", iPlayer + 1, PlayerScore[iPlayer]);
+                    }
                     else
-                        Console.WriteLine(string.Format("Tie! The score is {0} to {1}", iGameScoreCPU1, iGameScoreCPU2));
-                    bGameLoop = false;
+                    {
+                        PlayerScore[iPlayer] = RollCPU(PlayerScore[iPlayer], iPlayer);
+                        Console.WriteLine("CPU {0}: {1}", iPlayer + 1 - nPeople, PlayerScore[iPlayer]);
+                    }
+
+                    if (PlayerScore[iPlayer] > 10000)
+                    {
+                        if (iPlayer < nPeople)
+                            Console.WriteLine("Player {0} wins!", iPlayer + 1);
+                        else
+                            Console.WriteLine("CPU {0} wins!", iPlayer + 1 - nPeople);
+                        bGameLoop = false;
+                    }
                 }
             }
         }

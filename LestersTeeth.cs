@@ -126,7 +126,7 @@
                         if (m_Count[ONE] > 0)
                             bBuela = false;
                     }
-                    else if (m_Count[ONE] > 2)
+                    else if (m_Count[ONE] > 0)
                         bBuela = false;
                     else if (nMult == SIX)
                     {
@@ -140,7 +140,7 @@
                         if (m_Count[FIVE] > 0)
                             bBuela = false;
                     }
-                    else if (m_Count[FIVE] >= 3)
+                    else if (m_Count[FIVE] > 0)
                         bBuela = false;
                     else if (nMult == FOUR)
                     {
@@ -598,22 +598,25 @@
                             nMult = TWO;
                         }
 
-                        if (m_Count[ONE] > 0 && m_Count[ONE] < 3)
+                        if (nMult != ZERO && nDice < 3)
                         {
-                            iTempScore += m_Count[ONE] * 100;
-                            Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
-                            nDice -= m_Count[ONE];
-                            m_Count[ONE] = 0;
-                            nMult = ZERO;
-                        }
+                            if (m_Count[ONE] > 0 && m_Count[ONE] < 3)
+                            {
+                                iTempScore += m_Count[ONE] * 100;
+                                Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
+                                nDice -= m_Count[ONE];
+                                m_Count[ONE] = 0;
+                                nMult = ZERO;
+                            }
 
-                        if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3)
-                        {
-                            iTempScore += m_Count[FIVE] * 50;
-                            Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
-                            nDice -= m_Count[FIVE];
-                            m_Count[FIVE] = 0;
-                            nMult = ZERO;
+                            if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3)
+                            {
+                                iTempScore += m_Count[FIVE] * 50;
+                                Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
+                                nDice -= m_Count[FIVE];
+                                m_Count[FIVE] = 0;
+                                nMult = ZERO;
+                            }
                         }
                     }
                 }
@@ -733,14 +736,14 @@
             Console.WriteLine("Scoring:");
             Console.WriteLine("Straight - 1500");
             Console.WriteLine("3 Ones   - 1000 - Additional 1000 each");
-            Console.WriteLine("3 Sixes  - 600  - Additional 600 each");
-            Console.WriteLine("3 Fives  - 500  - Additional 500 each");
-            Console.WriteLine("3 Fours  - 400  - Additional 400 each");
-            Console.WriteLine("3 Threes - 300  - Additional 300 each");
-            Console.WriteLine("3 Twos   - 200  - Additional 200 each");
-            Console.WriteLine("3 Pair   - 500");
-            Console.WriteLine("One      - 100");
-            Console.WriteLine("Five     - 50");
+            Console.WriteLine("3 Sixes  -  600 - Additional  600 each");
+            Console.WriteLine("3 Fives  -  500 - Additional  500 each");
+            Console.WriteLine("3 Fours  -  400 - Additional  400 each");
+            Console.WriteLine("3 Threes -  300 - Additional  300 each");
+            Console.WriteLine("3 Twos   -  200 - Additional  200 each");
+            Console.WriteLine("3 Pair   -  500");
+            Console.WriteLine("1 One    -  100");
+            Console.WriteLine("1 Five   -   50");
             Console.WriteLine();
         }
 
@@ -814,6 +817,15 @@
                         else
                             PlayerScore[iPlayer] = RollCPU(PlayerScore[iPlayer], iPlayer + 1);
 
+                        for (int jPlayer = 0; jPlayer < nPlayers; jPlayer++)
+                        {
+                            Console.WriteLine(string.Format("{0} {1} - Score {2}",
+                            jPlayer < nPeople ? "Player" : "CPU",
+                            jPlayer < nPeople ? jPlayer + 1 : nPlayers - jPlayer + 1,
+                            PlayerScore[jPlayer]));
+                        }
+                        Console.WriteLine();
+
                         if (PlayerScore[iPlayer] > 10000)
                         {
                             bGameLoop = false;
@@ -835,9 +847,9 @@
                     else
                     {
                         if (iPlayer < nPeople)
-                            Console.WriteLine("Player {0} scores {1} and loses!", iPlayer + 1, PlayerScore[iPlayer]);
+                            Console.WriteLine("Player {0} scores {1} and loses", iPlayer + 1, PlayerScore[iPlayer]);
                         else
-                            Console.WriteLine("CPU {0} scores {1} and loses!", iPlayer + 1 - nPeople, PlayerScore[iPlayer]);
+                            Console.WriteLine("CPU {0} scores {1} and loses", iPlayer + 1 - nPeople, PlayerScore[iPlayer]);
                     }
                 }
 

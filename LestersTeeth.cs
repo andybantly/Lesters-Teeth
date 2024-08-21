@@ -183,14 +183,16 @@
                     do
                     {
                         bool bChoose = true;
+                        int[] CountBackup = new int[6] { m_Count[ONE], m_Count[TWO], m_Count[THREE], m_Count[FOUR], m_Count[FIVE], m_Count[SIX] };
                         do
                         {
-                            int[] Count = new int[6] { m_Count[0], m_Count[1], m_Count[2], m_Count[3], m_Count[4], m_Count[5] };
+                            m_Count = new int[6] { CountBackup[ONE], CountBackup[TWO], CountBackup[THREE], CountBackup[FOUR], CountBackup[FIVE], CountBackup[SIX] };
+                            int[] Count = new int[6] { m_Count[ONE], m_Count[TWO], m_Count[THREE], m_Count[FOUR], m_Count[FIVE], m_Count[SIX] };
                             int[] Count2 = new int[6] { 0, 0, 0, 0, 0, 0 };
 
                             Console.Write("Pick up score dice: ");
                             string? strDice = Console.ReadLine();
-                            if (strDice != null)
+                            if (!string.IsNullOrEmpty(strDice))
                             {
                                 bool bError = false;
                                 foreach (char cDie in strDice)
@@ -212,10 +214,11 @@
                                             bError = true;
                                     }
                                 }
+
                                 if (!bError)
                                 {
-                                    for (int i = 0; i < 6; i++)
-                                        m_Count[i] = Count2[i];
+                                    for (int iDie = ONE; iDie <= SIX; iDie++)
+                                        m_Count[iDie] = Count2[iDie];
                                     bChoose = false;
                                 }
                             }
@@ -262,7 +265,6 @@
                                 }
                                 else if (m_Count[ONE] >= 3)
                                 {
-                                    // Eintausend - 1000
                                     iTempScore += (m_Count[ONE] - 2) * 1000;
                                     Console.WriteLine("Roll {0} - {1} Ones - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
                                     nDice -= m_Count[ONE];

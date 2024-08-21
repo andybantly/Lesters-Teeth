@@ -75,6 +75,7 @@
                         Console.WriteLine("Press R to roll, S to score");
                     else
                         Console.WriteLine("Press R to roll");
+                    Console.WriteLine();
                     ConsoleKeyInfo cki = Console.ReadKey(true);
                     string strKey = cki.KeyChar.ToString();
                     if (iRollScore >= 500 || iGameScorePlayer >= 500)
@@ -175,6 +176,7 @@
                     bRollLoop = false;
                     Console.WriteLine("Buela!");
                     bBuela = true;
+                    Thread.Sleep(1000);
                 }
                 else
                 {
@@ -447,6 +449,7 @@
                 }
                 Console.WriteLine();
 #endif
+                Thread.Sleep(1000);
 
                 bool bIsLargeStraight = IsLargeStraight(nDice);
                 bool bIs3Pair = Is3Pair(nDice);
@@ -598,25 +601,22 @@
                             nMult = TWO;
                         }
 
-                        if (nMult != ZERO && nDice < 3)
+                        if (m_Count[ONE] > 0 && m_Count[ONE] < 3)
                         {
-                            if (m_Count[ONE] > 0 && m_Count[ONE] < 3)
-                            {
-                                iTempScore += m_Count[ONE] * 100;
-                                Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
-                                nDice -= m_Count[ONE];
-                                m_Count[ONE] = 0;
-                                nMult = ZERO;
-                            }
+                            iTempScore += m_Count[ONE] * 100;
+                            Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
+                            nDice -= m_Count[ONE];
+                            m_Count[ONE] = 0;
+                            nMult = ZERO;
+                        }
 
-                            if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3)
-                            {
-                                iTempScore += m_Count[FIVE] * 50;
-                                Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
-                                nDice -= m_Count[FIVE];
-                                m_Count[FIVE] = 0;
-                                nMult = ZERO;
-                            }
+                        if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3)
+                        {
+                            iTempScore += m_Count[FIVE] * 50;
+                            Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
+                            nDice -= m_Count[FIVE];
+                            m_Count[FIVE] = 0;
+                            nMult = ZERO;
                         }
                     }
                 }
@@ -626,6 +626,7 @@
                     bRollLoop = false;
                     Console.WriteLine("Buela!");
                     bBuela = true;
+                    Thread.Sleep(1000);
                 }
                 else
                 {
@@ -726,6 +727,7 @@
             if (!bBuela)
                 iGameScoreCPU += iRollScore;
             Console.WriteLine(string.Format("CPU {0} - Score {1}\r\n", iCPUID, iGameScoreCPU));
+            Thread.Sleep(1000);
             return iGameScoreCPU;
         }
 
@@ -842,14 +844,14 @@
                         if (iPlayer < nPeople)
                             Console.WriteLine("Player {0} scores {1} and wins!", iPlayer + 1, PlayerScore[iPlayer]);
                         else
-                            Console.WriteLine("CPU {0} scores {1} and wins!", iPlayer + 1 - nPeople, PlayerScore[iPlayer]);
+                            Console.WriteLine("CPU {0} scores {1} and wins!", iPlayer - nPeople, PlayerScore[iPlayer]);
                     }
                     else
                     {
                         if (iPlayer < nPeople)
                             Console.WriteLine("Player {0} scores {1} and loses", iPlayer + 1, PlayerScore[iPlayer]);
                         else
-                            Console.WriteLine("CPU {0} scores {1} and loses", iPlayer + 1 - nPeople, PlayerScore[iPlayer]);
+                            Console.WriteLine("CPU {0} scores {1} and loses", iPlayer - nPeople, PlayerScore[iPlayer]);
                     }
                 }
 

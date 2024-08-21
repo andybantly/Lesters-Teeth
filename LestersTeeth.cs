@@ -99,8 +99,9 @@
                 m_Dice = new int[6] { 0, 0, 0, 0, 0, 0 };
                 m_Count = new int[6] { 0, 0, 0, 0, 0, 0 };
                 for (int iDie = 0; iDie < nDice; iDie++)
-                {
                     m_Dice[iDie] = Rnd.Next(1, 7);
+                for (int iDie = 0; iDie < nDice; iDie++)
+                {
                     m_Count[m_Dice[iDie] - 1]++;
                     Console.Write("{0} ", m_Dice[iDie]);
                 }
@@ -390,6 +391,42 @@
                                     m_Count[FIVE] = 0;
                                     nMult = ZERO;
                                 }
+
+                                if (m_Count[TWO] >= 3 || m_Count[THREE] >= 3 || m_Count[FOUR] >= 3 || m_Count[SIX] >= 3)
+                                {
+                                    if (m_Count[SIX] >= 3)
+                                    {
+                                        iTempScore += (m_Count[SIX] - 2) * 600;
+                                        Console.WriteLine("Roll {0} - {1} Sixes - Total {2}", nRoll + 1, m_Count[SIX], iTempScore);
+                                        nDice -= m_Count[SIX];
+                                        m_Count[SIX] = 0;
+                                        nMult = SIX;
+                                    }
+                                    else if (m_Count[FOUR] >= 3)
+                                    {
+                                        iTempScore += (m_Count[FOUR] - 2) * 400;
+                                        Console.WriteLine("Roll {0} - {1} Four(s) - Total {2}", nRoll + 1, m_Count[FOUR], iTempScore);
+                                        nDice -= m_Count[FOUR];
+                                        m_Count[FOUR] = 0;
+                                        nMult = FOUR;
+                                    }
+                                    else if (m_Count[THREE] >= 3)
+                                    {
+                                        iTempScore += (m_Count[THREE] - 2) * 300;
+                                        Console.WriteLine("Roll {0} - {1} Three(s) - Total {2}", nRoll + 1, m_Count[THREE], iTempScore);
+                                        nDice -= m_Count[THREE];
+                                        m_Count[THREE] = 0;
+                                        nMult = THREE;
+                                    }
+                                    else if (m_Count[TWO] >= 3)
+                                    {
+                                        iTempScore += (m_Count[TWO] - 2) * 200;
+                                        Console.WriteLine("Roll {0} - {1} Two(s) - Total {2}", nRoll + 1, m_Count[TWO], iTempScore);
+                                        nDice -= m_Count[TWO];
+                                        m_Count[TWO] = 0;
+                                        nMult = TWO;
+                                    }
+                                }
                             }
                         }
 
@@ -468,6 +505,18 @@
                         m_Count[iDie] = 0;
                     nDice = 0;
                     nMult = ZERO;
+
+                    if (iGameScoreCPU < 500)
+                    {
+                        Console.WriteLine("Counting my blessings");
+                        bRollLoop = false;
+                    }
+
+                    if ((iRollScore > 1000) && Rnd.Next(1, 101) > 80)
+                    {
+                        Console.WriteLine("Not going to chance it");
+                        bRollLoop = false;
+                    }
                 }
                 else
                 {

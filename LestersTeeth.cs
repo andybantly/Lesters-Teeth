@@ -875,7 +875,7 @@
                     bConvert = Int32.TryParse(strPlayers, out nPlayers);
                     if (bConvert)
                     {
-                        if (nPlayers < 2)
+                        if (nPlayers < 1)
                         {
                             Console.WriteLine("Not enough players");
                             bConvert = false;

@@ -648,7 +648,7 @@
                                     // Could have 3, 2, or 1 dice left.  Higher multiplier makes higher score. Determine chance of going for it!
                                     if (nMult == ONE || nMult == FIVE || nMult == SIX)
                                     {
-                                        int GT = nMult == ONE ? 80 : (nMult == FIVE ? 90 : 100);
+                                        int GT = nMult == ONE ? 100 : (nMult == FIVE ? 110 : 120);
                                         if ((iChance * nDice) < GT)
                                         {
                                             Console.WriteLine("Not going for it! It's Your turn");

@@ -10,6 +10,8 @@
         const int FIVE = 4;
         const int SIX = 5;
 
+        const int WAIT = 1500;
+
         static int[]? m_Dice = null;
         static int[]? m_Count = null;
 
@@ -174,9 +176,9 @@
                 if (bBuela)
                 {
                     bRollLoop = false;
-                    Console.WriteLine("Buela!");
+                    Console.WriteLine("Buela!\r\n");
                     bBuela = true;
-                    Thread.Sleep(1000);
+                    Thread.Sleep(WAIT);
                 }
                 else
                 {
@@ -433,8 +435,9 @@
                 m_Dice = new int[6] { 0, 0, 0, 0, 0, 0 };
                 m_Count = new int[6] { 0, 0, 0, 0, 0, 0 };
                 for ( int iDie = 0; iDie < nDice; iDie++)
-                {
                     m_Dice[iDie] = m_Rnd.Next(1, 7);
+                for (int iDie = 0; iDie < nDice; iDie++)
+                {
                     m_Count[m_Dice[iDie] - 1]++;
                     Console.Write("{0} ", m_Dice[iDie]);
                 }
@@ -451,7 +454,7 @@
                 }
                 Console.WriteLine();
 #endif
-                Thread.Sleep(1000);
+                Thread.Sleep(WAIT);
 
                 bool bIsLargeStraight = IsLargeStraight(nDice);
                 bool bIs3Pair = Is3Pair(nDice);
@@ -626,9 +629,9 @@
                 if (iTempScore == 0)
                 {
                     bRollLoop = false;
-                    Console.WriteLine("Buela!");
+                    Console.WriteLine("Buela!\r\n");
                     bBuela = true;
-                    Thread.Sleep(1000);
+                    Thread.Sleep(WAIT);
                 }
                 else
                 {
@@ -690,6 +693,14 @@
                                 }
                             }
                         }
+                        else
+                        {
+                            if (nDice == 0)
+                            {
+                                Console.WriteLine("Go Teeth!");
+                                nDice = 6;
+                            }
+                        }
                     }
                     else
                     {
@@ -724,12 +735,12 @@
                     }
                     Console.WriteLine();
                 }
-                Thread.Sleep(1000);
+                Thread.Sleep(WAIT);
             }
             if (!bBuela)
                 iGameScoreCPU += iRollScore;
             Console.WriteLine(string.Format("CPU {0} - Score {1}\r\n", iCPUID, iGameScoreCPU));
-            Thread.Sleep(1000);
+            Thread.Sleep(WAIT);
             return iGameScoreCPU;
         }
 
@@ -825,10 +836,11 @@
                         {
                             Console.WriteLine(string.Format("{0} {1} - Score {2}",
                             jPlayer < nPeople ? "Player" : "CPU",
-                            jPlayer < nPeople ? jPlayer + 1 : nPlayers - jPlayer + 1,
+                            jPlayer < nPeople ? jPlayer + 1 : jPlayer - nPeople + 1,
                             PlayerScore[jPlayer]));
                         }
                         Console.WriteLine();
+                        Thread.Sleep(WAIT);
 
                         if (PlayerScore[iPlayer] > 10000)
                         {

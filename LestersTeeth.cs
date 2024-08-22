@@ -492,7 +492,7 @@
 
             if (!bBuela)
                 iGameScorePlayer += iRollScore;
-            Console.WriteLine(string.Format("Player {0} - Score {1}\r\n", iPlayerID, iGameScorePlayer));
+            Console.WriteLine(string.Format("Player {0} - Round Score {1}\r\n", iPlayerID, iGameScorePlayer));
             return iGameScorePlayer;
         }
 
@@ -916,7 +916,7 @@
             }
             if (!bBuela)
                 iGameScoreCPU += iRollScore;
-            Console.WriteLine(string.Format("CPU {0} - Score {1}\r\n", iCPUID, iGameScoreCPU));
+            Console.WriteLine(string.Format("CPU {0} - Round Score {1}\r\n", iCPUID - 1, iGameScoreCPU));
             Thread.Sleep(WAIT);
             return iGameScoreCPU;
         }
@@ -1014,10 +1014,11 @@
                         else
                             PlayerScore[iPlayer] = RollCPU(ref Rnd, PlayerScore[iPlayer], iPlayer + 1);
 
+                        Console.WriteLine("Scoring");
                         for (int jPlayer = 0; jPlayer < nPlayers; jPlayer++)
                         {
                             Console.WriteLine(string.Format("{0} {1} - Score {2}",
-                            jPlayer < nPeople ? "Player" : "CPU",
+                            jPlayer < nPeople ? "Player" : "   CPU",
                             jPlayer < nPeople ? jPlayer + 1 : jPlayer - nPeople + 1,
                             PlayerScore[jPlayer]));
                         }

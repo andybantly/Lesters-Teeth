@@ -746,7 +746,8 @@
                         m_Count[TWO] = 0;
                         nMult = TWO;
                     }
-                    else
+
+                    if (nMult == ZERO || bRollLoop == false)
                     {
                         if (m_Count[ONE] > 0 && m_Count[ONE] < 3)
                         {
@@ -767,7 +768,8 @@
                                 nMult = ZERO;
                             }
                         }
-                        else if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3)
+
+                        if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3)
                         {
                             if (iGameScoreCPU < 500)
                             {
@@ -815,7 +817,6 @@
                                 {
                                     if (nMult > ZERO)
                                     {
-                                        // Could have 3, 2, or 1 dice left.  Higher multiplier makes higher score. Determine chance of going for it!
                                         if (nMult == ONE || nMult == FIVE || nMult == SIX)
                                         {
                                             int GT = nMult == ONE ? 100 : (nMult == FIVE ? 110 : 120);

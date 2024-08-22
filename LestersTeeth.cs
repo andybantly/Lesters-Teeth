@@ -913,14 +913,36 @@
                 }
                 if (bRollLoop)
                     Thread.Sleep(WAIT);
+                else
+                {
+                    // Check for stranded scoring
+                    if (m_Count != null)
+                    {
+                        if (m_Count[ONE] > 0)
+                        {
+                            iTempScore += m_Count[ONE] * 100;
+                            Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
+                            nDice -= m_Count[ONE];
+                            m_Count[ONE] = 0;
+                            nMult = ZERO;
+                        }
+                        if (m_Count[FIVE] > 0)
+                        {
+                            iTempScore += m_Count[FIVE] * 50;
+                            Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
+                            nDice -= m_Count[FIVE];
+                            m_Count[FIVE] = 0;
+                            nMult = ZERO;
+                        }
+                    }
+                }
             }
             if (!bBuela)
                 iGameScoreCPU += iRollScore;
-            Console.WriteLine(string.Format("CPU {0} - Round Score {1}\r\n", iCPUID - 1, iGameScoreCPU));
+            Console.WriteLine(string.Format("CPU {0} - Round Score {1}\r\n", iCPUID, iGameScoreCPU));
             Thread.Sleep(WAIT);
             return iGameScoreCPU;
         }
-
         static void Scoring()
         {
             Console.WriteLine("Lesters Teeth");
@@ -938,7 +960,6 @@
             Console.WriteLine("1 Five   -   50");
             Console.WriteLine();
         }
-
         static void Main(string[] args)
         {
             Random Rnd = SeedRng(ref args);
@@ -1014,7 +1035,7 @@
                         else
                             PlayerScore[iPlayer] = RollCPU(ref Rnd, PlayerScore[iPlayer], iPlayer + 1);
 
-                        Console.WriteLine("Scoring");
+                        Console.WriteLine("Score");
                         for (int jPlayer = 0; jPlayer < nPlayers; jPlayer++)
                         {
                             Console.WriteLine(string.Format("{0} {1} - Score {2}",
@@ -1041,14 +1062,14 @@
                         if (iPlayer < nPeople)
                             Console.WriteLine("Player {0} scores {1} and wins!", iPlayer + 1, PlayerScore[iPlayer]);
                         else
-                            Console.WriteLine("CPU {0} scores {1} and wins!", iPlayer - nPeople, PlayerScore[iPlayer]);
+                            Console.WriteLine("CPU {0} scores {1} and wins!", iPlayer - nPeople + 1, PlayerScore[iPlayer]);
                     }
                     else
                     {
                         if (iPlayer < nPeople)
                             Console.WriteLine("Player {0} scores {1} and loses", iPlayer + 1, PlayerScore[iPlayer]);
                         else
-                            Console.WriteLine("CPU {0} scores {1} and loses", iPlayer - nPeople, PlayerScore[iPlayer]);
+                            Console.WriteLine("CPU {0} scores {1} and loses", iPlayer - nPeople + 1, PlayerScore[iPlayer]);
                     }
                 }
 

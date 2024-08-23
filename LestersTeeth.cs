@@ -156,7 +156,7 @@
             {
                 while (true)
                 {
-                    if (iRollScore >= 500 || iGameScorePlayer >= 500)
+                    if (iRollScore >= 500 || (iGameScorePlayer >= 500 && iRollScore > 0))
                         Console.WriteLine("Press R to roll, S to score");
                     else
                         Console.WriteLine("Press R to roll");
@@ -961,6 +961,58 @@
             Console.WriteLine("1 Five   -   50");
             Console.WriteLine();
         }
+
+        static void SetupPlayers(out int nPlayers, out int nCPUs, out int nPeople)
+        {
+            nPlayers = 0;
+            nCPUs = 0;
+            nPeople = 0;
+
+            bool bConvert = false;
+            do
+            {
+                Console.Write("Number of players? ");
+                string? strPlayers = Console.ReadLine();
+                bConvert = Int32.TryParse(strPlayers, out nPlayers);
+                if (bConvert)
+                {
+                    if (nPlayers < 1)
+                    {
+                        Console.WriteLine("Not enough players");
+                        bConvert = false;
+                    }
+                    else
+                    {
+                        Console.Write("How many are CPU? ");
+                        string? strCPUs = Console.ReadLine();
+                        bConvert = Int32.TryParse(strCPUs, out nCPUs);
+                        if (!bConvert)
+                            Console.WriteLine("Input error, try again");
+                        else
+                        {
+                            if (nCPUs < 0)
+                            {
+                                Console.WriteLine("There must be 0 or more CPU players");
+                                bConvert = false;
+                            }
+                            else
+                            {
+                                if (nCPUs > nPlayers)
+                                {
+                                    Console.WriteLine("Too many CPUs");
+                                    bConvert = false;
+                                }
+                                else
+                                    nPeople = nPlayers - nCPUs;
+                            }
+                        }
+                    }
+                }
+                else
+                    Console.WriteLine("Input error, try again");
+            } while (!bConvert);
+        }
+
         static void Main(string[] args)
         {
             Random Rnd = SeedRng(ref args);
@@ -971,59 +1023,17 @@
             {
                 Scoring();
 
-                bool bConvert = false;
-                int nPlayers = 0, nCPUs = 0, nPeople = 0;
-                do
-                {
-                    Console.Write("Number of players? ");
-                    string? strPlayers = Console.ReadLine();
-                    bConvert = Int32.TryParse(strPlayers, out nPlayers);
-                    if (bConvert)
-                    {
-                        if (nPlayers < 1)
-                        {
-                            Console.WriteLine("Not enough players");
-                            bConvert = false;
-                        }
-                        else
-                        {
-                            Console.Write("How many are CPU? ");
-                            string? strCPUs = Console.ReadLine();
-                            bConvert = Int32.TryParse(strCPUs, out nCPUs);
-                            if (!bConvert)
-                                Console.WriteLine("Input error, try again");
-                            else
-                            {
-                                if (nCPUs < 0)
-                                {
-                                    Console.WriteLine("There must be 0 or more CPU players");
-                                    bConvert = false;
-                                }
-                                else
-                                {
-                                    if (nCPUs > nPlayers)
-                                    {
-                                        Console.WriteLine("Too many CPUs");
-                                        bConvert = false;
-                                    }
-                                    else
-                                        nPeople = nPlayers - nCPUs;
-                                }
-                            }
-                        }
-                    }
-                    else
-                        Console.WriteLine("Input error, try again");
-                } while (!bConvert);
+                SetupPlayers(out int nPlayers, out int nCPUs, out int nPeople);
 
                 Console.WriteLine("\r\nStarting order is Player(s) first, CPU(s) second. Good Luck!\r\n");
 
                 int[] PlayerScore = new int[nPlayers];
 
+                int iTurn = 0;
                 bool bGameLoop = true;
                 while (bGameLoop)
                 {
-                    Console.WriteLine("Lesters Teeth\r\n");
+                    Console.WriteLine("Lesters Teeth\r\nTurn {0}\r\n", ++iTurn);
                     for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++)
                     {
                         Console.WriteLine(string.Format("{0} {1}",

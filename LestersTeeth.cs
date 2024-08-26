@@ -550,12 +550,14 @@
                     if (iGameScoreCPU < 500)
                     {
                         Console.WriteLine("Counting my blessings");
+                        iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
                         bRollLoop = false;
                     }
 
                     if ((iRollScore > 1000) && Rnd.Next(1, 101) > 80)
                     {
                         Console.WriteLine("Not going to chance it");
+                        iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
                         bRollLoop = false;
                     }
                 }
@@ -638,7 +640,10 @@
                         nMult = ONE;
 
                         if (iGameScoreCPU < 500)
+                        {
+                            iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
                             bRollLoop = false;
+                        }
                     }
                     else if (nMult == SIX)
                     {
@@ -661,7 +666,10 @@
                         nMult = SIX;
 
                         if (iGameScoreCPU < 500)
+                        {
+                            iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
                             bRollLoop = false;
+                        }
                     }
                     else if (nMult == FIVE)
                     {
@@ -684,7 +692,10 @@
                         nMult = FIVE;
 
                         if (iGameScoreCPU < 500)
+                        {
+                            iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
                             bRollLoop = false;
+                        }
                     }
                     else if (nMult == FOUR)
                     {
@@ -746,125 +757,70 @@
                         m_Count[TWO] = 0;
                         nMult = TWO;
                     }
-
-                    if (nMult == ZERO || bRollLoop == false)
-                    {
-                        if (m_Count[ONE] > 0 && m_Count[ONE] < 3)
-                        {
-                            if (iGameScoreCPU < 500)
-                            {
-                                iTempScore += 100;
-                                Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
-                                nDice--;
-                                m_Count[ONE]--;
-                                nMult = ZERO;
-                            }
-                            else
-                            {
-                                iTempScore += m_Count[ONE] * 100;
-                                Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
-                                nDice -= m_Count[ONE];
-                                m_Count[ONE] = 0;
-                                nMult = ZERO;
-                            }
-                        }
-
-                        if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3)
-                        {
-                            if (iGameScoreCPU < 500)
-                            {
-                                iTempScore += 50;
-                                Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
-                                nDice--;
-                                m_Count[FIVE]--;
-                                nMult = ZERO;
-                            }
-                            else
-                            {
-                                iTempScore += m_Count[FIVE] * 50;
-                                Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
-                                nDice -= m_Count[FIVE];
-                                m_Count[FIVE] = 0;
-                                nMult = ZERO;
-                            }
-                        }
-                    }
                 }
 
                 if (iTempScore == 0)
                 {
-                    bRollLoop = false;
-                    Console.WriteLine("Buela!\r\n");
-                    bBuela = true;
-                    Thread.Sleep(WAIT);
-                }
-                else
-                {
-                    iRollScore += iTempScore;
-                    Console.WriteLine("Total Roll Score {0}", iRollScore);
-
-                    if (bRollLoop)
+                    iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
+                    if (iTempScore == 0)
                     {
-                        if (nMult > ZERO)
-                            Console.WriteLine("{0} is the roll multiplier", nMult + 1);
+                        bRollLoop = false;
+                        Console.WriteLine("Buela!\r\n");
+                        bBuela = true;
+                        Thread.Sleep(WAIT);
+                    }
+                }
 
-                        int iChance = Rnd.Next(1, 101);
-                        if (iGameScoreCPU < 500)
+                if (bRollLoop)
+                {
+                    int iChance = Rnd.Next(1, 101);
+                    if (iGameScoreCPU < 500)
+                    {
+                        if (iGameScoreCPU + iRollScore >= 500)
                         {
-                            if (iGameScoreCPU + iRollScore >= 500)
+                            if (nDice > 0)
                             {
-                                if (nDice > 0)
+                                if (nMult > ZERO)
                                 {
-                                    if (nMult > ZERO)
+                                    if (nMult == ONE || nMult == FIVE || nMult == SIX)
                                     {
-                                        if (nMult == ONE || nMult == FIVE || nMult == SIX)
+                                        int GT = nMult == ONE ? 100 : (nMult == FIVE ? 110 : 120);
+                                        if ((iChance * nDice) < GT)
                                         {
-                                            int GT = nMult == ONE ? 100 : (nMult == FIVE ? 110 : 120);
-                                            if ((iChance * nDice) < GT)
-                                            {
-                                                Console.WriteLine("Not going for it! It's Your turn");
-                                                bRollLoop = false;
-                                            }
-                                            else
-                                                Console.WriteLine("Going for it!");
+                                            Console.WriteLine("Not going for it! It's Your turn");
+                                            bRollLoop = false;
                                         }
                                         else
-                                        {
-                                            if (iChance < 90)
-                                            {
-                                                Console.WriteLine("Not going for it! It's Your turn");
-                                                bRollLoop = false;
-                                            }
-                                            else
-                                                Console.WriteLine("Going for it!");
-                                        }
+                                            Console.WriteLine("Going for it!");
                                     }
                                     else
                                     {
-                                        Console.WriteLine("On the board! It's Your turn");
-                                        bRollLoop = false;
+                                        if (iChance < 90)
+                                        {
+                                            Console.WriteLine("Not going for it! It's Your turn");
+                                            bRollLoop = false;
+                                        }
+                                        else
+                                            Console.WriteLine("Going for it!");
                                     }
                                 }
                                 else
                                 {
-                                    if (iChance > 75)
-                                    {
-                                        Console.WriteLine("Going for it, Fresh Teeth!");
-                                        nDice = 6;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Not going for it. On the board! It's Your turn");
-                                        bRollLoop = false;
-                                    }
+                                    Console.WriteLine("On the board! It's Your turn");
+                                    bRollLoop = false;
                                 }
                             }
                             else
                             {
-                                if (nDice == 0)
+                                if (iChance > 75)
                                 {
-                                    Console.WriteLine("Go Teeth!");
+                                    Console.WriteLine("Going for it, Fresh Teeth!");
                                     nDice = 6;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Not going for it. On the board! It's Your turn");
+                                    bRollLoop = false;
                                 }
                             }
                         }
@@ -872,77 +828,101 @@
                         {
                             if (nDice == 0)
                             {
-                                if (iRollScore > 2500)
-                                {
-                                    Console.WriteLine("Fresh Teeth, rolled enough and not going for it. Your turn");
-                                    bRollLoop = false;
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Fresh Teeth!");
-                                    nDice = 6;
-                                }
+                                Console.WriteLine("Go Teeth!");
+                                nDice = 6;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (nDice == 0)
+                        {
+                            if (iRollScore > 2500)
+                            {
+                                Console.WriteLine("Fresh Teeth, rolled enough and not going for it. Your turn");
+                                bRollLoop = false;
                             }
                             else
                             {
-                                if (iRollScore > 1500)
-                                {
-                                    if (nDice < 4)
-                                    {
-                                        Console.WriteLine("Your turn");
-                                        bRollLoop = false;
-                                    }
-                                }
-                                else if (iRollScore > 500)
-                                {
-                                    if (nDice < 3)
-                                    {
-                                        Console.WriteLine("Your turn");
-                                        bRollLoop = false;
-                                    }
-                                }
-
-                                if (bRollLoop)
-                                    Console.WriteLine("Rolling");
+                                Console.WriteLine("Fresh Teeth!");
+                                nDice = 6;
                             }
-                            nRoll++;
                         }
-                        Console.WriteLine();
+                        else
+                        {
+                            if (iRollScore > 1500)
+                            {
+                                if (nDice < 4)
+                                {
+                                    Console.WriteLine("Your turn");
+                                    bRollLoop = false;
+                                }
+                            }
+                            else if (iRollScore > 500)
+                            {
+                                if (nDice < 3)
+                                {
+                                    Console.WriteLine("Your turn");
+                                    bRollLoop = false;
+                                }
+                            }
+
+                            if (!bRollLoop)
+                                iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
+                            if (bRollLoop)
+                                Console.WriteLine("Rolling");
+                        }
+                        nRoll++;
                     }
+
+                    if (bRollLoop && nMult > ZERO)
+                        Console.WriteLine("{0} is the roll multiplier", nMult + 1);
                     else
-                        Console.WriteLine("Your turn");
+                        Console.WriteLine();
                 }
+                else
+                    Console.WriteLine("Your turn");
+
+                iRollScore += iTempScore;
+                Console.WriteLine("Total Roll Score {0}", iRollScore);
+
                 if (bRollLoop)
                     Thread.Sleep(WAIT);
-                else
-                {
-                    // Check for stranded scoring
-                    if (m_Count != null)
-                    {
-                        if (m_Count[ONE] > 0)
-                        {
-                            iTempScore += m_Count[ONE] * 100;
-                            Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
-                            nDice -= m_Count[ONE];
-                            m_Count[ONE] = 0;
-                            nMult = ZERO;
-                        }
-                        if (m_Count[FIVE] > 0)
-                        {
-                            iTempScore += m_Count[FIVE] * 50;
-                            Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
-                            nDice -= m_Count[FIVE];
-                            m_Count[FIVE] = 0;
-                            nMult = ZERO;
-                        }
-                    }
-                }
             }
             if (!bBuela)
                 iGameScoreCPU += iRollScore;
             Console.WriteLine(string.Format("CPU {0} - Round Score {1}\r\n", iCPUID, iGameScoreCPU));
             Thread.Sleep(WAIT);
             return iGameScoreCPU;
+        }
+
+        static int CheckStranded(int nRoll, ref int nDice, ref int nMult)
+        {
+            int iTempScore = 0;
+            if (m_Count != null)
+            {
+                if (m_Count[ONE] > 0)
+                {
+                    Console.WriteLine("But first I need to pickup some dice");
+                    iTempScore += m_Count[ONE] * 100;
+                    Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
+                    nDice -= m_Count[ONE];
+                    m_Count[ONE] = 0;
+                    nMult = ZERO;
+                }
+
+                if (m_Count[FIVE] > 0)
+                {
+                    Console.WriteLine("But first I need to pickup some dice");
+                    iTempScore += m_Count[FIVE] * 50;
+                    Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
+                    nDice -= m_Count[FIVE];
+                    m_Count[FIVE] = 0;
+                    nMult = ZERO;
+                }
+            }
+
+            return iTempScore;
         }
         static void Scoring()
         {

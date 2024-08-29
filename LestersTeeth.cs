@@ -267,8 +267,7 @@
                             // Large straight : 1500 points
                             iTempScore += 1500;
                             Console.WriteLine("Roll {0} - Large Straight - Total {1}", nRoll + 1, iTempScore);
-                            for (int iDie = ONE; iDie <= SIX; iDie++)
-                                m_Count[iDie] = 0;
+                            m_Count = [0, 0, 0, 0, 0, 0];
                             nDice = 0;
                             nMult = ZERO;
                         }
@@ -277,8 +276,7 @@
                             // 3 Pair : 500 points
                             iTempScore += 500;
                             Console.WriteLine("Roll {0} - Three Pair - Total {1}", nRoll + 1, iTempScore);
-                            for (int iDie = ONE; iDie <= SIX; iDie++)
-                                m_Count[iDie] = 0;
+                            m_Count = [0, 0, 0, 0, 0, 0];
                             nDice = 0;
                             nMult = ZERO;
                         }
@@ -508,8 +506,8 @@
             {
                 Console.Write(" Roll {0}: ", nRoll + 1);
                 int iTempScore = 0;
-                m_Dice = new int[6] { 0, 0, 0, 0, 0, 0 };
-                m_Count = new int[6] { 0, 0, 0, 0, 0, 0 };
+                m_Dice = [0, 0, 0, 0, 0, 0];
+                m_Count = [0, 0, 0, 0, 0, 0];
                 for ( int iDie = 0; iDie < nDice; iDie++)
                     m_Dice[iDie] = Rnd.Next(1, 7);
                 for (int iDie = 0; iDie < nDice; iDie++)
@@ -542,8 +540,7 @@
                     // Large straight : 1500 points
                     iTempScore += 1500;
                     Console.WriteLine("Roll {0} - Large Straight - Total {1}", nRoll + 1, iTempScore);
-                    for (int iDie = ONE; iDie <= SIX; iDie++)
-                        m_Count[iDie] = 0;
+                    m_Count = [0, 0, 0, 0, 0, 0];
                     nDice = 0;
                     nMult = ZERO;
 
@@ -566,8 +563,7 @@
                     // 3 Pair : 500 points
                     iTempScore += 500;
                     Console.WriteLine("Roll {0} - Three Pair - Total {1}", nRoll + 1, iTempScore);
-                    for (int iDie = ONE; iDie <= SIX; iDie++)
-                        m_Count[iDie] = 0;
+                    m_Count = [0, 0, 0, 0, 0, 0];
                     nDice = 0;
                     nMult = ZERO;
                 }
@@ -833,7 +829,7 @@
                             }
                         }
                     }
-                    else
+                    else // todo - build metrics that show how many times these events happen
                     {
                         if (nDice == 0)
                         {
@@ -853,23 +849,46 @@
                             if (iRollScore > 1500)
                             {
                                 if (nDice < 4)
-                                {
-                                    Console.WriteLine("Your turn");
                                     bRollLoop = false;
-                                }
                             }
-                            else if (iRollScore > 500)
+                            else if (iRollScore > 1000)
                             {
                                 if (nDice < 3)
-                                {
-                                    Console.WriteLine("Your turn");
                                     bRollLoop = false;
+                            }
+                            else
+                            {
+                                int nDie = Rnd.Next(1, 101);
+                                if (nDice == 5)
+                                {
+                                    if (nDie > 80)
+                                        bRollLoop = false;
                                 }
+                                else if (nDice == 4)
+                                {
+                                    if (nDie > 60)
+                                        bRollLoop = false;
+                                }
+                                else if (nDice == 3)
+                                {
+                                    if (nDie > 40)
+                                        bRollLoop = false;
+                                }
+                                else if (nDice == 2)
+                                {
+                                    if (nDie > 20)
+                                        bRollLoop = false;
+                                }
+                                else
+                                    bRollLoop = false;
                             }
 
                             if (!bRollLoop)
+                            {
+                                Console.WriteLine("Your turn");
                                 iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
-                            if (bRollLoop)
+                            }
+                            else
                                 Console.WriteLine("Rolling");
                         }
                         nRoll++;
@@ -884,7 +903,6 @@
                     Console.WriteLine("Your turn");
 
                 iRollScore += iTempScore;
-                Console.WriteLine("Total Roll Score {0}", iRollScore);
 
                 if (bRollLoop)
                     Thread.Sleep(WAIT);
@@ -903,7 +921,6 @@
             {
                 if (m_Count[ONE] > 0)
                 {
-                    Console.WriteLine("But first I need to pickup some dice");
                     iTempScore += m_Count[ONE] * 100;
                     Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
                     nDice -= m_Count[ONE];
@@ -913,7 +930,6 @@
 
                 if (m_Count[FIVE] > 0)
                 {
-                    Console.WriteLine("But first I need to pickup some dice");
                     iTempScore += m_Count[FIVE] * 50;
                     Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
                     nDice -= m_Count[FIVE];

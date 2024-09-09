@@ -10,7 +10,7 @@
         const int FIVE = 4;
         const int SIX = 5;
 
-        const int WAIT = 1500;
+        const int WAIT = 2000;
 
         static int[]? m_Dice = null;
         static int[]? m_Count = null;
@@ -639,6 +639,14 @@
                         {
                             iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
                             bRollLoop = false;
+                        }
+                        else if (nDice == 0)
+                        {
+                            if (Rnd.Next(1, 101) > 50)
+                            {
+                                Console.WriteLine("Dice too hot to handle, your turn");
+                                bRollLoop = false;
+                            }
                         }
                     }
                     else if (nMult == SIX)

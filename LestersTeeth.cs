@@ -547,14 +547,12 @@
                     if (iGameScoreCPU < 500)
                     {
                         Console.WriteLine("Counting my blessings");
-                        iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
                         bRollLoop = false;
                     }
 
                     if ((iRollScore > 1000) && Rnd.Next(1, 101) > 80)
                     {
                         Console.WriteLine("Not going to chance it");
-                        iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
                         bRollLoop = false;
                     }
                 }
@@ -1061,7 +1059,7 @@
                         Console.WriteLine();
                         Thread.Sleep(WAIT);
 
-                        if (PlayerScore[iPlayer] > 10000)
+                        if (PlayerScore[iPlayer] >= 10000)
                         {
                             bGameLoop = false;
                             break;
@@ -1072,7 +1070,7 @@
                 Console.WriteLine();
                 for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++)
                 {
-                    if (PlayerScore[iPlayer] > 10000)
+                    if (PlayerScore[iPlayer] >= 10000)
                     {
                         if (iPlayer < nPeople)
                             Console.WriteLine("Player {0} scores {1} and wins!", iPlayer + 1, PlayerScore[iPlayer]);

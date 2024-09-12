@@ -636,6 +636,7 @@
                         if (iGameScoreCPU < 500)
                         {
                             iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
+                            Console.WriteLine("Dice getting hot but on the board!");
                             bRollLoop = false;
                         }
                         else if (nDice == 0)
@@ -713,11 +714,18 @@
                     }
                     else if (m_Count[FOUR] >= 3)
                     {
+                        bool bExtra = m_Count[FOUR] >= 4;
                         iTempScore += (m_Count[FOUR] - 2) * 400;
                         Console.WriteLine("Roll {0} - {1} Four(s) - Total {2}", nRoll + 1, m_Count[FOUR], iTempScore);
                         nDice -= m_Count[FOUR];
                         m_Count[FOUR] = 0;
                         nMult = FOUR;
+
+                        if (iGameScoreCPU < 500 && bExtra)
+                        {
+                            iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
+                            bRollLoop = false;
+                        }
                     }
                     else if (nMult == THREE)
                     {
@@ -738,6 +746,13 @@
                         nDice -= m_Count[THREE];
                         m_Count[THREE] = 0;
                         nMult = THREE;
+
+                        bool bExtra = m_Count[THREE] >= 4;
+                        if (iGameScoreCPU < 500 && bExtra)
+                        {
+                            iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
+                            bRollLoop = false;
+                        }
                     }
                     else if (nMult == TWO)
                     {
@@ -758,6 +773,32 @@
                         nDice -= m_Count[TWO];
                         m_Count[TWO] = 0;
                         nMult = TWO;
+
+                        bool bExtra = m_Count[TWO] >= 5;
+                        if (iGameScoreCPU < 500 && bExtra)
+                        {
+                            iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
+                            bRollLoop = false;
+                        }
+                    }
+                    else
+                    {
+                        if (m_Count[ONE] > 0 && iTempScore < 500)
+                        {
+                            iTempScore += 100;
+                            m_Count[ONE]--;
+                            Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, 1, iTempScore);
+                            nDice -= m_Count[ONE];
+                            nMult = ZERO;
+                        }
+                        else if (m_Count[FIVE] > 0 && iTempScore < 500)
+                        {
+                            iTempScore += 50;
+                            m_Count[FIVE]--;
+                            Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, 1, iTempScore);
+                            nDice -= m_Count[FIVE];
+                            nMult = ZERO;
+                        }
                     }
                 }
 
@@ -894,21 +935,26 @@
                         }
                         nRoll++;
                     }
-
-                    if (bRollLoop && nMult > ZERO)
-                        Console.WriteLine("{0} is the roll multiplier\r\n", nMult + 1);
-                    else
-                        Console.WriteLine();
+                    Console.WriteLine();
                 }
 
                 iRollScore += iTempScore;
+                if ((iGameScoreCPU + iRollScore) >= 10000)
+                {
 
-                if (bRollLoop)
-                    Thread.Sleep(WAIT);
+                    Console.WriteLine("Good game but this ones mine!\r\n");
+                    bRollLoop = false;
+                }
+
+                if (bRollLoop && nMult != ZERO)
+                    Console.WriteLine("{0} is the roll multiplier\r\n", nMult + 1);
+
             }
+
             if (!bBuela)
                 iGameScoreCPU += iRollScore;
-            Console.WriteLine(string.Format("CPU {0} - Round Score {1}\r\n", iCPUID, iGameScoreCPU));
+
+            Console.WriteLine(string.Format("CPU {0} - Round Score {1}\r\n", iCPUID - 1, iGameScoreCPU));
             Thread.Sleep(WAIT);
             return iGameScoreCPU;
         }
@@ -945,13 +991,13 @@
             Console.WriteLine();
             Console.WriteLine("Scoring:\r\n");
             Console.WriteLine("Straight - 1500");
+            Console.WriteLine("3 Pair   -  500");
             Console.WriteLine("3 Ones   - 1000 - Additional 1000 each");
             Console.WriteLine("3 Sixes  -  600 - Additional  600 each");
             Console.WriteLine("3 Fives  -  500 - Additional  500 each");
             Console.WriteLine("3 Fours  -  400 - Additional  400 each");
             Console.WriteLine("3 Threes -  300 - Additional  300 each");
             Console.WriteLine("3 Twos   -  200 - Additional  200 each");
-            Console.WriteLine("3 Pair   -  500");
             Console.WriteLine("1 One    -  100");
             Console.WriteLine("1 Five   -   50");
             Console.WriteLine();

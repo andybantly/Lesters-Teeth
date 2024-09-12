@@ -642,7 +642,7 @@
                         {
                             if (Rnd.Next(1, 101) > 50)
                             {
-                                Console.WriteLine("Dice too hot to handle, your turn");
+                                Console.WriteLine("Dice too hot to handle!");
                                 bRollLoop = false;
                             }
                         }
@@ -789,7 +789,7 @@
                                         int GT = nMult == ONE ? 100 : (nMult == FIVE ? 110 : 120);
                                         if ((iChance * nDice) < GT)
                                         {
-                                            Console.WriteLine("Not going for it! It's Your turn");
+                                            Console.WriteLine("Not going for it!");
                                             bRollLoop = false;
                                         }
                                         else
@@ -799,7 +799,7 @@
                                     {
                                         if (iChance < 90)
                                         {
-                                            Console.WriteLine("Not going for it! It's Your turn");
+                                            Console.WriteLine("Not going for it!");
                                             bRollLoop = false;
                                         }
                                         else
@@ -808,7 +808,7 @@
                                 }
                                 else
                                 {
-                                    Console.WriteLine("On the board! It's Your turn");
+                                    Console.WriteLine("On the board!");
                                     bRollLoop = false;
                                 }
                             }
@@ -821,7 +821,7 @@
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Not going for it. On the board! It's Your turn");
+                                    Console.WriteLine("Not going for it. On the board!");
                                     bRollLoop = false;
                                 }
                             }
@@ -841,7 +841,7 @@
                         {
                             if (iRollScore > 2500)
                             {
-                                Console.WriteLine("Fresh Teeth, rolled enough and not going for it. Your turn");
+                                Console.WriteLine("Fresh Teeth, rolled enough and not going for it.");
                                 bRollLoop = false;
                             }
                             else
@@ -890,23 +890,16 @@
                             }
 
                             if (!bRollLoop)
-                            {
-                                Console.WriteLine("Your turn");
                                 iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
-                            }
-                            else
-                                Console.WriteLine("Rolling");
                         }
                         nRoll++;
                     }
 
                     if (bRollLoop && nMult > ZERO)
-                        Console.WriteLine("{0} is the roll multiplier", nMult + 1);
+                        Console.WriteLine("{0} is the roll multiplier\r\n", nMult + 1);
                     else
                         Console.WriteLine();
                 }
-                else
-                    Console.WriteLine("Your turn");
 
                 iRollScore += iTempScore;
 
@@ -1064,6 +1057,9 @@
                             bGameLoop = false;
                             break;
                         }
+
+                        Console.WriteLine("It's your roll");
+                        Console.WriteLine();
                     }
                 }
 

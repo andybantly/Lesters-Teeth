@@ -908,12 +908,12 @@
                                 int nDie = Rnd.Next(1, 101);
                                 if (nDice == 5)
                                 {
-                                    if (nDie > 80)
+                                    if (nDie < 10)
                                         bRollLoop = false;
                                 }
                                 else if (nDice == 4)
                                 {
-                                    if (nDie > 60)
+                                    if (nDie < 20)
                                         bRollLoop = false;
                                 }
                                 else if (nDice == 3)
@@ -953,7 +953,7 @@
             if (!bBuela)
                 iGameScoreCPU += iRollScore;
 
-            Console.WriteLine(string.Format("CPU {0} - Round Score {1}\r\n", iCPUID - 1, iGameScoreCPU));
+            Console.WriteLine(string.Format("CPU {0} - Round Score {1}\r\n", iCPUID, iGameScoreCPU));
             Thread.Sleep(WAIT);
             return iGameScoreCPU;
         }
@@ -1074,6 +1074,7 @@
                 while (bGameLoop)
                 {
                     Console.WriteLine("Lesters Teeth\r\nTurn {0}\r\n", ++iTurn);
+                    int iPlayerID = 1, iCPUID = 1;
                     for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++)
                     {
                         Console.WriteLine(string.Format("{0} {1}",
@@ -1082,9 +1083,9 @@
                         ));
 
                         if (iPlayer < nPeople)
-                            PlayerScore[iPlayer] = RollPlayer(ref Rnd, PlayerScore[iPlayer], iPlayer + 1);
+                            PlayerScore[iPlayer] = RollPlayer(ref Rnd, PlayerScore[iPlayer], iPlayerID++);
                         else
-                            PlayerScore[iPlayer] = RollCPU(ref Rnd, PlayerScore[iPlayer], iPlayer + 1);
+                            PlayerScore[iPlayer] = RollCPU(ref Rnd, PlayerScore[iPlayer], iCPUID++);
 
                         Console.WriteLine("Score");
                         for (int jPlayer = 0; jPlayer < nPlayers; jPlayer++)

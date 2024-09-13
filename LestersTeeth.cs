@@ -786,17 +786,17 @@
                         if (m_Count[ONE] > 0 && iTempScore < 500)
                         {
                             iTempScore += 100;
-                            m_Count[ONE]--;
                             Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, 1, iTempScore);
                             nDice -= m_Count[ONE];
+                            m_Count[ONE]--;
                             nMult = ZERO;
                         }
                         else if (m_Count[FIVE] > 0 && iTempScore < 500)
                         {
                             iTempScore += 50;
-                            m_Count[FIVE]--;
                             Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, 1, iTempScore);
                             nDice -= m_Count[FIVE];
+                            m_Count[FIVE]--;
                             nMult = ZERO;
                         }
                     }
@@ -948,7 +948,6 @@
 
                 if (bRollLoop && nMult != ZERO)
                     Console.WriteLine("{0} is the roll multiplier\r\n", nMult + 1);
-
             }
 
             if (!bBuela)

@@ -760,7 +760,7 @@
                         {
                             iTempScore += 100;
                             Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, 1, iTempScore);
-                            nDice -= m_Count[ONE];
+                            nDice -= 1;
                             m_Count[ONE]--;
                             nMult = ZERO;
                         }
@@ -768,7 +768,7 @@
                         {
                             iTempScore += 50;
                             Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, 1, iTempScore);
-                            nDice -= m_Count[FIVE];
+                            nDice -= 1;
                             m_Count[FIVE]--;
                             nMult = ZERO;
                         }
@@ -1014,13 +1014,13 @@
             Console.WriteLine();
             Console.WriteLine("Scoring:\r\n");
             Console.WriteLine("Straight - 1500");
-            Console.WriteLine("3 Pair   -  500");
             Console.WriteLine("3 Ones   - 1000 - Additional 1000 each");
             Console.WriteLine("3 Sixes  -  600 - Additional  600 each");
             Console.WriteLine("3 Fives  -  500 - Additional  500 each");
             Console.WriteLine("3 Fours  -  400 - Additional  400 each");
             Console.WriteLine("3 Threes -  300 - Additional  300 each");
             Console.WriteLine("3 Twos   -  200 - Additional  200 each");
+            Console.WriteLine("3 Pair   -  500");
             Console.WriteLine("1 One    -  100");
             Console.WriteLine("1 Five   -   50");
             Console.WriteLine();

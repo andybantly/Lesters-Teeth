@@ -92,52 +92,25 @@
                     bBuela = false;
                 else
                 {
-                    if (nMult == ONE)
+                    if (nMult != ZERO)
                     {
-                        if (m_Count[ONE] > 0)
+                        if (m_Count[nMult] > 0)
                             bBuela = false;
                     }
-                    else if (m_Count[ONE] > 0)
-                        bBuela = false;
-                    else if (nMult == SIX)
-                    {
-                        if (m_Count[SIX] > 0)
-                            bBuela = false;
-                    }
-                    else if (m_Count[SIX] >= 3)
-                        bBuela = false;
-                    else if (nMult == FIVE)
-                    {
-                        if (m_Count[FIVE] > 0)
-                            bBuela = false;
-                    }
-                    else if (m_Count[FIVE] > 0)
-                        bBuela = false;
-                    else if (nMult == FOUR)
-                    {
-                        if (m_Count[FOUR] > 0)
-                            bBuela = false;
-                    }
-                    else if (m_Count[FOUR] >= 3)
-                        bBuela = false;
-                    else if (nMult == THREE)
-                    {
-                        if (m_Count[THREE] > 0)
-                            bBuela = false;
-                    }
-                    else if (m_Count[THREE] >= 3)
-                        bBuela = false;
-                    else if (nMult == TWO)
-                    {
-                        if (m_Count[TWO] > 0)
-                            bBuela = false;
-                    }
-                    else if (m_Count[TWO] >= 3)
+
+                    if (m_Count[ONE] > 0)
                         bBuela = false;
 
-                    if (m_Count[ONE] > 0 && m_Count[ONE] < 3)
+                    if (m_Count[FIVE] > 0)
                         bBuela = false;
-                    if (m_Count[FIVE] > 0 && m_Count[FIVE] < 3)
+
+                    if (m_Count[SIX] >= 3)
+                        bBuela = false;
+                    if (m_Count[FOUR] >= 3)
+                        bBuela = false;
+                    if (m_Count[THREE] >= 3)
+                        bBuela = false;
+                    if (m_Count[TWO] >= 3)
                         bBuela = false;
                 }
             }
@@ -963,22 +936,73 @@
             int iTempScore = 0;
             if (m_Count != null)
             {
+                if (nMult == ONE)
+                {
+                    if (m_Count[ONE] > 0)
+                    {
+                        iTempScore += m_Count[ONE] * 1000;
+                        Console.WriteLine("Roll {0} - {1} Ones - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
+                        nDice -= m_Count[ONE];
+                        m_Count[ONE] = 0;
+                    }
+                }
+                else if (nMult == SIX)
+                {
+                    if (m_Count[SIX] > 0)
+                    {
+                        iTempScore += m_Count[SIX] * 600;
+                        Console.WriteLine("Roll {0} - {1} Sixes - Total {2}", nRoll + 1, m_Count[SIX], iTempScore);
+                        nDice -= m_Count[SIX];
+                        m_Count[SIX] = 0;
+                    }
+                }
+                else if (nMult == FIVE)
+                {
+                    if (m_Count[FIVE] > 0)
+                    {
+                        iTempScore += m_Count[FIVE] * 50;
+                        Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
+                        nDice -= m_Count[FIVE];
+                        m_Count[FIVE] = 0;
+                    }
+                }
+                else if (nMult == FOUR)
+                {
+                    if (m_Count[FOUR] > 0)
+                    {
+                        iTempScore += m_Count[FOUR] * 400;
+                        Console.WriteLine("Roll {0} - {1} Four(s) - Total {2}", nRoll + 1, m_Count[FOUR], iTempScore);
+                        nDice -= m_Count[FOUR];
+                        m_Count[FOUR] = 0;
+                    }
+                }
+                else if (nMult == THREE)
+                {
+                    if (m_Count[THREE] > 0)
+                    {
+                        iTempScore += m_Count[THREE] * 300;
+                        Console.WriteLine("Roll {0} - {1} Three(s) - Total {2}", nRoll + 1, m_Count[THREE], iTempScore);
+                        nDice -= m_Count[THREE];
+                        m_Count[THREE] = 0;
+                    }
+                }
+                else if (nMult == TWO)
+                {
+                    if (m_Count[TWO] > 0)
+                    {
+                        iTempScore += m_Count[TWO] * 200;
+                        Console.WriteLine("Roll {0} - {1} Two(s) - Total {2}", nRoll + 1, m_Count[TWO], iTempScore);
+                        nDice -= m_Count[TWO];
+                        m_Count[TWO] = 0;
+                    }
+                }
+
                 if (m_Count[ONE] > 0)
                 {
                     iTempScore += m_Count[ONE] * 100;
                     Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
                     nDice -= m_Count[ONE];
                     m_Count[ONE] = 0;
-                    nMult = ZERO;
-                }
-
-                if (m_Count[FIVE] > 0)
-                {
-                    iTempScore += m_Count[FIVE] * 50;
-                    Console.WriteLine("Roll {0} - {1} Five(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
-                    nDice -= m_Count[FIVE];
-                    m_Count[FIVE] = 0;
-                    nMult = ZERO;
                 }
             }
 

@@ -192,9 +192,9 @@
                         int[] CountBackup = new int[6] { m_Count[ONE], m_Count[TWO], m_Count[THREE], m_Count[FOUR], m_Count[FIVE], m_Count[SIX] };
                         do
                         {
-                            m_Count = new int[6] { CountBackup[ONE], CountBackup[TWO], CountBackup[THREE], CountBackup[FOUR], CountBackup[FIVE], CountBackup[SIX] };
-                            int[] Count = new int[6] { m_Count[ONE], m_Count[TWO], m_Count[THREE], m_Count[FOUR], m_Count[FIVE], m_Count[SIX] };
-                            int[] Count2 = new int[6] { 0, 0, 0, 0, 0, 0 };
+                            m_Count = [CountBackup[ONE], CountBackup[TWO], CountBackup[THREE], CountBackup[FOUR], CountBackup[FIVE], CountBackup[SIX]];
+                            int[] Count = [m_Count[ONE], m_Count[TWO], m_Count[THREE], m_Count[FOUR], m_Count[FIVE], m_Count[SIX]];
+                            int[] Count2 = [0, 0, 0, 0, 0, 0];
 
                             Console.Write("Pick up score dice: ");
                             string? strDice = Console.ReadLine();

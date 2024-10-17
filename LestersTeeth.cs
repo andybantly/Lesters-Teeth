@@ -83,6 +83,22 @@
             return bIs23Kind;
         }
 
+        static bool IsRunClean(int nDice, int nMult)
+        {
+            bool bIsRunClean = false;
+            if (m_Count != null && nMult != ZERO)
+            {
+                int nRem = nDice - m_Count[nMult];
+                if (nMult != ONE && m_Count[ONE] > 0)
+                    nRem -= m_Count[ONE];
+                if (nMult != FIVE && m_Count[FIVE] > 0)
+                    nRem -= m_Count[FIVE];
+                if (nRem == 0)
+                    bIsRunClean = true;
+            }
+            return bIsRunClean;
+        }
+
         static bool IsBuela(int nDice, int nMult)
         {
             bool bBuela = true;
@@ -165,7 +181,7 @@
                 Console.WriteLine();
 
 #if DEBUG
-                bool bWriteCount = true;
+                bool bWriteCount = false;
                 if (bWriteCount)
                 {
                     Console.Write("Count {0}: ", nRoll + 1);
@@ -491,7 +507,7 @@
                 Console.WriteLine();
 
 #if DEBUG
-                bool bWriteCount = true;
+                bool bWriteCount = false;
                 if (bWriteCount)
                 {
                     Console.Write("Count {0}: ", nRoll + 1);
@@ -506,6 +522,7 @@
                 bool bIsLargeStraight = IsLargeStraight(nDice);
                 bool bIs3Pair = Is3Pair(nDice);
                 bool bIs23Kind = Is23Kind(nDice);
+                bool bIsRunClean = IsRunClean(nDice, nMult);
 
                 // Look for patterns
                 if (bIsLargeStraight)
@@ -582,6 +599,12 @@
                         nDice -= m_Count[TWO];
                         m_Count[TWO] = 0;
                     }
+                }
+                else if (bIsRunClean)
+                {
+                    iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
+                    if (nDice != 0)
+                        Console.WriteLine("Error");
                 }
                 else
                 {
@@ -832,6 +855,7 @@
                                 {
                                     Console.WriteLine("Going for it, Fresh Teeth!");
                                     nDice = 6;
+                                    nMult = ZERO;
                                 }
                                 else
                                 {
@@ -857,10 +881,12 @@
                             {
                                 Console.WriteLine("Fresh Teeth, rolled enough and not going for it.");
                                 bRollLoop = false;
+                                nMult = ZERO;
                             }
                             else
                             {
                                 Console.WriteLine("Fresh Teeth!");
+                                nMult = ZERO;
                                 nDice = 6;
                             }
                         }

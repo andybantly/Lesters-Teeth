@@ -100,9 +100,9 @@ namespace Lesters_Teeth
         static bool IsRunClean(int nDice, int nMult)
         {
             bool bIsRunClean = false;
-            if (m_Count != null && nMult != ZERO)
+            if (m_Count != null)
             {
-                int nRem = nDice - m_Count[nMult];
+                int nRem = nDice - (nMult != ZERO ? m_Count[nMult] : 0);
                 if (nMult != ONE && m_Count[ONE] > 0)
                     nRem -= m_Count[ONE];
                 if (nMult != FIVE && m_Count[FIVE] > 0)
@@ -111,6 +111,46 @@ namespace Lesters_Teeth
                     bIsRunClean = true;
             }
             return bIsRunClean;
+        }
+
+        // ASB - 10/17/24 - This modifies and needs to be renamed to reflect that
+        static int CheckStranded(int nRoll, ref int nDice, ref int nMult)
+        {
+            int iTempScore = 0;
+            if (m_Count != null)
+            {
+                if (nMult != ZERO)
+                {
+                    if (m_Count[nMult] > 0)
+                    {
+                        string[]? Die = ["One(s)", "Two{s}", "Three(s)", "Four(s)", "Five(s)", "Six(es)"];
+                        int[]? Score = [1000, 200, 300, 400, 500, 600];
+
+                        iTempScore += m_Count[nMult] * Score[nMult];
+                        Console.WriteLine("Roll {0} - {1} {2} - Total {3}", nRoll + 1, m_Count[ONE], Die[nMult], iTempScore);
+                        nDice -= m_Count[nMult];
+                        m_Count[nMult] = 0;
+                    }
+                }
+
+                if (m_Count[ONE] > 0)
+                {
+                    iTempScore += m_Count[ONE] * 100;
+                    Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
+                    nDice -= m_Count[ONE];
+                    m_Count[ONE] = 0;
+                }
+
+                if (m_Count[FIVE] > 0)
+                {
+                    iTempScore += m_Count[FIVE] * 50;
+                    Console.WriteLine("Roll {0} - {1} Fives(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
+                    nDice -= m_Count[FIVE];
+                    m_Count[FIVE] = 0;
+                }
+            }
+
+            return iTempScore;
         }
 
         static bool IsBuela(int nDice, int nMult)
@@ -122,18 +162,12 @@ namespace Lesters_Teeth
                     bBuela = false;
                 else
                 {
-                    if (nMult != ZERO)
-                    {
-                        if (m_Count[nMult] > 0)
-                            bBuela = false;
-                    }
-
+                    if (nMult != ZERO && m_Count[nMult] > 0)
+                        bBuela = false;
                     if (m_Count[ONE] > 0)
                         bBuela = false;
-
                     if (m_Count[FIVE] > 0)
                         bBuela = false;
-
                     if (m_Count[SIX] >= 3)
                         bBuela = false;
                     if (m_Count[FOUR] >= 3)
@@ -145,6 +179,27 @@ namespace Lesters_Teeth
                 }
             }
             return bBuela;
+        }
+
+        static bool GoForIt(ref Random Rnd, int nPlayers, int[] PlayerScore, int iGameScoreCPU, int iRollScore)
+        {
+            bool bResult = false;
+            int nMax = 0;
+            for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++)
+            {
+                if (PlayerScore[iPlayer] > nMax)
+                    nMax = PlayerScore[iPlayer];
+            }
+            if ((iGameScoreCPU + iRollScore) < nMax)
+            {
+                int nDiff = nMax - (iGameScoreCPU + iRollScore);
+                if (nDiff > 1000) // give 10% chance
+                {
+                    if (Rnd.Next(1, 101) > 90)
+                        bResult = true;
+                }
+            }
+            return bResult;
         }
 
         static int RollPlayer(ref Random Rnd, int iGameScorePlayer, int iPlayerID)
@@ -183,8 +238,8 @@ namespace Lesters_Teeth
 
                 Console.Write(" Roll {0}: ", nRoll + 1);
                 int iTempScore = 0;
-                m_Dice = new int[6] { 0, 0, 0, 0, 0, 0 };
-                m_Count = new int[6] { 0, 0, 0, 0, 0, 0 };
+                m_Dice = [ 0, 0, 0, 0, 0, 0 ];
+                m_Count = [ 0, 0, 0, 0, 0, 0 ];
                 for (int iDie = 0; iDie < nDice; iDie++)
                     m_Dice[iDie] = Rnd.Next(1, 7);
                 for (int iDie = 0; iDie < nDice; iDie++)
@@ -497,7 +552,7 @@ namespace Lesters_Teeth
             return iGameScorePlayer;
         }
 
-        static int RollCPU(ref Random Rnd, int iGameScoreCPU, int iCPUID)
+        static int RollCPU(ref Random Rnd, int nPlayers, int[] PlayerScore, int iGameScoreCPU, int iCPUID)
         {
             bool bRollLoop = true;
             int nDice = 6;
@@ -551,13 +606,17 @@ namespace Lesters_Teeth
                     if (iGameScoreCPU < 500)
                     {
                         Console.WriteLine("Counting my blessings");
-                        bRollLoop = false;
+                        if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                            bRollLoop = false;
+                        Console.WriteLine(bRollLoop ? "And going for it" : " And passing the teeth");
                     }
 
                     if ((iRollScore > 1000) && Rnd.Next(1, 101) > 80)
                     {
                         Console.WriteLine("Not going to chance it");
-                        bRollLoop = false;
+                        if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                            bRollLoop = false;
+                        Console.WriteLine(bRollLoop ? "And going for it" : " And passing the teeth");
                     }
                 }
                 else if (bIs3Pair)
@@ -617,8 +676,6 @@ namespace Lesters_Teeth
                 else if (bIsRunClean)
                 {
                     iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
-                    if (nDice != 0)
-                        Console.WriteLine("Error");
                 }
                 else
                 {
@@ -647,14 +704,18 @@ namespace Lesters_Teeth
                         {
                             iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
                             Console.WriteLine("Dice getting hot but on the board!");
-                            bRollLoop = false;
+                            if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                bRollLoop = false;
+                            Console.WriteLine(bRollLoop ? "Going for it" : "Passing the teeth");
                         }
                         else if (nDice == 0)
                         {
                             if (Rnd.Next(1, 101) > 50)
                             {
                                 Console.WriteLine("Dice too hot to handle!");
-                                bRollLoop = false;
+                                if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                    bRollLoop = false;
+                                Console.WriteLine(bRollLoop ? "Going for it" : "Passing the teeth");
                             }
                         }
                     }
@@ -681,7 +742,8 @@ namespace Lesters_Teeth
                         if (iGameScoreCPU < 500)
                         {
                             iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
-                            bRollLoop = false;
+                            if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                bRollLoop = false;
                         }
                     }
                     else if (nMult == FIVE)
@@ -707,7 +769,8 @@ namespace Lesters_Teeth
                         if (iGameScoreCPU < 500)
                         {
                             iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
-                            bRollLoop = false;
+                            if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                bRollLoop = false;
                         }
                     }
                     else if (nMult == FOUR)
@@ -734,7 +797,8 @@ namespace Lesters_Teeth
                         if (iGameScoreCPU < 500 && bExtra)
                         {
                             iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
-                            bRollLoop = false;
+                            if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                bRollLoop = false;
                         }
                     }
                     else if (nMult == THREE)
@@ -761,7 +825,8 @@ namespace Lesters_Teeth
                         if (iGameScoreCPU < 500 && bExtra)
                         {
                             iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
-                            bRollLoop = false;
+                            if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                bRollLoop = false;
                         }
                     }
                     else if (nMult == TWO)
@@ -788,7 +853,8 @@ namespace Lesters_Teeth
                         if (iGameScoreCPU < 500 && bExtra)
                         {
                             iTempScore += CheckStranded(nRoll, ref nDice, ref nMult);
-                            bRollLoop = false;
+                            if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                bRollLoop = false;
                         }
                     }
                     else
@@ -840,8 +906,11 @@ namespace Lesters_Teeth
                                         int GT = nMult == ONE ? 100 : (nMult == FIVE ? 110 : 120);
                                         if ((iChance * nDice) < GT)
                                         {
-                                            Console.WriteLine("Not going for it!");
-                                            bRollLoop = false;
+                                            if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                            {
+                                                Console.WriteLine("Not going for it!");
+                                                bRollLoop = false;
+                                            }
                                         }
                                         else
                                             Console.WriteLine("Going for it!");
@@ -850,8 +919,13 @@ namespace Lesters_Teeth
                                     {
                                         if (iChance < 90)
                                         {
-                                            Console.WriteLine("Not going for it!");
-                                            bRollLoop = false;
+                                            if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                            {
+                                                Console.WriteLine("Not going for it!");
+                                                bRollLoop = false;
+                                            }
+                                            else
+                                                Console.WriteLine("Going for it!");
                                         }
                                         else
                                             Console.WriteLine("Going for it!");
@@ -859,8 +933,11 @@ namespace Lesters_Teeth
                                 }
                                 else
                                 {
-                                    Console.WriteLine("On the board!");
-                                    bRollLoop = false;
+                                    if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                    {
+                                        Console.WriteLine("On the board!");
+                                        bRollLoop = false;
+                                    }
                                 }
                             }
                             else
@@ -894,8 +971,11 @@ namespace Lesters_Teeth
                             if (iRollScore > 2500)
                             {
                                 Console.WriteLine("Fresh Teeth, rolled enough and not going for it.");
-                                bRollLoop = false;
-                                nMult = ZERO;
+                                if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                {
+                                    bRollLoop = false;
+                                    nMult = ZERO;
+                                }
                             }
                             else
                             {
@@ -909,12 +989,14 @@ namespace Lesters_Teeth
                             if (iRollScore > 1500)
                             {
                                 if (nDice < 4)
-                                    bRollLoop = false;
+                                    if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                        bRollLoop = false;
                             }
                             else if (iRollScore > 1000)
                             {
                                 if (nDice < 3)
-                                    bRollLoop = false;
+                                    if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                        bRollLoop = false;
                             }
                             else
                             {
@@ -922,25 +1004,32 @@ namespace Lesters_Teeth
                                 if (nDice == 5)
                                 {
                                     if (nDie < 10)
-                                        bRollLoop = false;
+                                        if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                            bRollLoop = false;
                                 }
                                 else if (nDice == 4)
                                 {
                                     if (nDie < 20)
-                                        bRollLoop = false;
+                                        if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                            bRollLoop = false;
                                 }
                                 else if (nDice == 3)
                                 {
                                     if (nDie > 40)
-                                        bRollLoop = false;
+                                        if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                            bRollLoop = false;
                                 }
                                 else if (nDice == 2)
                                 {
                                     if (nDie > 20)
-                                        bRollLoop = false;
+                                        if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                            bRollLoop = false;
                                 }
                                 else
-                                    bRollLoop = false;
+                                {
+                                    if (!GoForIt(ref Rnd, nPlayers, PlayerScore, iGameScoreCPU, iRollScore))
+                                        bRollLoop = false;
+                                }
                             }
 
                             if (!bRollLoop)
@@ -954,9 +1043,9 @@ namespace Lesters_Teeth
                 iRollScore += iTempScore;
                 if ((iGameScoreCPU + iRollScore) >= 10000)
                 {
-
                     Console.WriteLine("Good game but this ones mine!\r\n");
                     bRollLoop = false;
+                    break;
                 }
 
                 if (bRollLoop && nMult != ZERO)
@@ -971,44 +1060,6 @@ namespace Lesters_Teeth
             return iGameScoreCPU;
         }
 
-        static int CheckStranded(int nRoll, ref int nDice, ref int nMult)
-        {
-            int iTempScore = 0;
-            if (m_Count != null)
-            {
-                if (nMult != ZERO)
-                {
-                    if (m_Count[nMult] > 0)
-                    {
-                        string[]? Die = ["One(s)", "Two{s}", "Three(s)", "Four(s)", "Five(s)", "Six(es)"];
-                        int[]? Score = [1000, 200, 300, 400, 500, 600];
-
-                        iTempScore += m_Count[nMult] * Score[nMult];
-                        Console.WriteLine("Roll {0} - {1} {2} - Total {3}", nRoll + 1, m_Count[ONE], Die[nMult], iTempScore);
-                        nDice -= m_Count[nMult];
-                        m_Count[nMult] = 0;
-                    }
-                }
-
-                if (m_Count[ONE] > 0)
-                {
-                    iTempScore += m_Count[ONE] * 100;
-                    Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
-                    nDice -= m_Count[ONE];
-                    m_Count[ONE] = 0;
-                }
-
-                if (m_Count[FIVE] > 0)
-                {
-                    iTempScore += m_Count[FIVE] * 50;
-                    Console.WriteLine("Roll {0} - {1} Fives(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
-                    nDice -= m_Count[FIVE];
-                    m_Count[FIVE] = 0;
-                }
-            }
-
-            return iTempScore;
-        }
         static void Scoring()
         {
             Console.WriteLine("Lesters Teeth v1.0.0");
@@ -1110,7 +1161,7 @@ namespace Lesters_Teeth
                         if (iPlayer < nPeople)
                             PlayerScore[iPlayer] = RollPlayer(ref Rnd, PlayerScore[iPlayer], iPlayerID++);
                         else
-                            PlayerScore[iPlayer] = RollCPU(ref Rnd, PlayerScore[iPlayer], iCPUID++);
+                            PlayerScore[iPlayer] = RollCPU(ref Rnd, nPlayers, PlayerScore, PlayerScore[iPlayer], iCPUID++);
 
                         Console.WriteLine("Score");
                         for (int jPlayer = 0; jPlayer < nPlayers; jPlayer++)

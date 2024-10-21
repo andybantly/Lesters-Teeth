@@ -193,7 +193,12 @@ namespace Lesters_Teeth
             if ((iGameScoreCPU + iRollScore) < nMax)
             {
                 int nDiff = nMax - (iGameScoreCPU + iRollScore);
-                if (nDiff > 1000) // give 10% chance
+                if (nDiff > 2500)
+                {
+                    if (Rnd.Next(1, 101) > 75)
+                        bResult = true;
+                }
+                else if (nDiff > 1000)
                 {
                     if (Rnd.Next(1, 101) > 90)
                         bResult = true;
@@ -1055,7 +1060,7 @@ namespace Lesters_Teeth
             if (!bBuela)
                 iGameScoreCPU += iRollScore;
 
-            Console.WriteLine(string.Format("CPU {0} - Round Score {1}\r\n", iCPUID, iGameScoreCPU));
+            Console.WriteLine(string.Format("CPU {0} - Round Score {1} - Total Score {2}\r\n", iCPUID, bBuela ? 0 : iRollScore, iGameScoreCPU));
             Thread.Sleep(WAIT);
             return iGameScoreCPU;
         }

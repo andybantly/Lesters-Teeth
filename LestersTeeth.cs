@@ -40,35 +40,25 @@ namespace Lesters_Teeth
         }
         static bool IsLargeStraight(int nDice)
         {
-            bool bIsLargeStraight = m_Count != null &&
-                    nDice == 6 &&
-                    m_Count[ONE] == 1 &&
-                    m_Count[TWO] == 1 &&
-                    m_Count[THREE] == 1 &&
-                    m_Count[FOUR] == 1 &&
-                    m_Count[FIVE] == 1 &&
-                    m_Count[SIX] == 1;
+            bool bIsLargeStraight = false;
+            if (m_Count != null && nDice == 6)
+            {
+                int nLS = 0;
+                for (int iDie = ONE; iDie <= SIX; ++iDie)
+                    nLS += (m_Count[iDie] == 1 ? 1 : 0);
+                bIsLargeStraight = nLS == 6;
+            }
             return bIsLargeStraight;
         }
 
         static bool Is3Pair(int nDice)
         {
             bool bIs3Pair = false;
-            if (nDice == 6)
+            if (m_Count != null && nDice == 6)
             {
                 int n3Pair = 0;
-                if (m_Count != null && m_Count[ONE] == 2)
-                    n3Pair++;
-                if (m_Count != null && m_Count[TWO] == 2)
-                    n3Pair++;
-                if (m_Count != null && m_Count[THREE] == 2)
-                    n3Pair++;
-                if (m_Count != null && m_Count[FOUR] == 2)
-                    n3Pair++;
-                if (m_Count != null && m_Count[FIVE] == 2)
-                    n3Pair++;
-                if (m_Count != null && m_Count[SIX] == 2)
-                    n3Pair++;
+                for (int iDie = ONE; n3Pair < 3 && iDie <= SIX; ++iDie)
+                    n3Pair += (m_Count[iDie] == 2 ? 1 : 0);
                 bIs3Pair = n3Pair == 3;
             }
             return bIs3Pair;
@@ -77,21 +67,11 @@ namespace Lesters_Teeth
         static bool Is23Kind(int nDice)
         {
             bool bIs23Kind = false;
-            if (nDice == 6)
+            if (m_Count != null && nDice == 6)
             {
                 int n23Kind = 0;
-                if (m_Count != null && m_Count[ONE] == 3)
-                    n23Kind++;
-                if (m_Count != null && m_Count[TWO] == 3)
-                    n23Kind++;
-                if (m_Count != null && m_Count[THREE] == 3)
-                    n23Kind++;
-                if (m_Count != null && m_Count[FOUR] == 3)
-                    n23Kind++;
-                if (m_Count != null && m_Count[FIVE] == 3)
-                    n23Kind++;
-                if (m_Count != null && m_Count[SIX] == 3)
-                    n23Kind++;
+                for (int iDie = ONE; n23Kind < 2 && iDie <= SIX; ++iDie)
+                    n23Kind += (m_Count[iDie] == 3 ? 1 : 0);
                 bIs23Kind = n23Kind == 2;
             }
             return bIs23Kind;
@@ -247,6 +227,7 @@ namespace Lesters_Teeth
                 m_Count = [ 0, 0, 0, 0, 0, 0 ];
                 for (int iDie = 0; iDie < nDice; iDie++)
                     m_Dice[iDie] = Rnd.Next(1, 7);
+//                m_Dice = [1, 1, 1, 2, 2, 2]; // For debugging specific rolls
                 for (int iDie = 0; iDie < nDice; iDie++)
                 {
                     m_Count[m_Dice[iDie] - 1]++;
@@ -279,7 +260,7 @@ namespace Lesters_Teeth
                     do
                     {
                         bool bChoose = true;
-                        int[] CountBackup = new int[6] { m_Count[ONE], m_Count[TWO], m_Count[THREE], m_Count[FOUR], m_Count[FIVE], m_Count[SIX] };
+                        int[] CountBackup = [m_Count[ONE], m_Count[TWO], m_Count[THREE], m_Count[FOUR], m_Count[FIVE], m_Count[SIX]];
                         do
                         {
                             m_Count = [CountBackup[ONE], CountBackup[TWO], CountBackup[THREE], CountBackup[FOUR], CountBackup[FIVE], CountBackup[SIX]];

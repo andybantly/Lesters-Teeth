@@ -38,6 +38,7 @@ namespace Lesters_Teeth
             Random Rnd = bSeed ? new Random(iSeed) : new Random();
             return Rnd;
         }
+
         static bool IsLargeStraight(int nDice)
         {
             bool bIsLargeStraight = false;
@@ -113,7 +114,7 @@ namespace Lesters_Teeth
                     }
                 }
 
-                if (m_Count[ONE] > 0)
+                if (nMult != ONE && m_Count[ONE] > 0)
                 {
                     iTempScore += m_Count[ONE] * 100;
                     Console.WriteLine("Roll {0} - {1} Ones(s) - Total {2}", nRoll + 1, m_Count[ONE], iTempScore);
@@ -121,7 +122,7 @@ namespace Lesters_Teeth
                     m_Count[ONE] = 0;
                 }
 
-                if (m_Count[FIVE] > 0)
+                if (nMult != FIVE && m_Count[FIVE] > 0)
                 {
                     iTempScore += m_Count[FIVE] * 50;
                     Console.WriteLine("Roll {0} - {1} Fives(s) - Total {2}", nRoll + 1, m_Count[FIVE], iTempScore);
@@ -138,24 +139,21 @@ namespace Lesters_Teeth
             bool bBuela = true;
             if (m_Count != null)
             {
-                if (IsLargeStraight(nDice) || Is3Pair(nDice) || Is23Kind(nDice))
+                if (IsLargeStraight(nDice) || Is3Pair(nDice) || Is23Kind(nDice) || IsRunClean(nDice, nMult))
                     bBuela = false;
-                else
+                if (!bBuela)
                 {
                     if (nMult != ZERO && m_Count[nMult] > 0)
                         bBuela = false;
-                    if (m_Count[ONE] > 0)
-                        bBuela = false;
-                    if (m_Count[FIVE] > 0)
-                        bBuela = false;
-                    if (m_Count[SIX] >= 3)
-                        bBuela = false;
-                    if (m_Count[FOUR] >= 3)
-                        bBuela = false;
-                    if (m_Count[THREE] >= 3)
-                        bBuela = false;
-                    if (m_Count[TWO] >= 3)
-                        bBuela = false;
+                    if (!bBuela)
+                    {
+                        int[]? Limit = [1, 3, 3, 3, 1, 3];
+                        for (int iDie = ONE; bBuela && iDie <= SIX; ++iDie)
+                        {
+                            if (m_Count[iDie] >= Limit[iDie])
+                                bBuela = false;
+                        }
+                    }
                 }
             }
             return bBuela;
@@ -227,7 +225,7 @@ namespace Lesters_Teeth
                 m_Count = [ 0, 0, 0, 0, 0, 0 ];
                 for (int iDie = 0; iDie < nDice; iDie++)
                     m_Dice[iDie] = Rnd.Next(1, 7);
-//                m_Dice = [1, 1, 1, 2, 2, 2]; // For debugging specific rolls
+                //m_Dice = [1, 1, 1, 2, 2, 2]; // For debugging specific rolls
                 for (int iDie = 0; iDie < nDice; iDie++)
                 {
                     m_Count[m_Dice[iDie] - 1]++;

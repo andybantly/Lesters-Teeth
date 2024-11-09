@@ -141,19 +141,13 @@ namespace Lesters_Teeth
             {
                 if (IsLargeStraight(nDice) || Is3Pair(nDice) || Is23Kind(nDice) || IsRunClean(nDice, nMult))
                     bBuela = false;
-                if (!bBuela)
+                if (nMult != ZERO && m_Count[nMult] > 0)
+                    bBuela = false;
+                int[]? Limit = [1, 3, 3, 3, 1, 3];
+                for (int iDie = ONE; bBuela && iDie <= SIX; ++iDie)
                 {
-                    if (nMult != ZERO && m_Count[nMult] > 0)
+                    if (m_Count[iDie] >= Limit[iDie])
                         bBuela = false;
-                    if (!bBuela)
-                    {
-                        int[]? Limit = [1, 3, 3, 3, 1, 3];
-                        for (int iDie = ONE; bBuela && iDie <= SIX; ++iDie)
-                        {
-                            if (m_Count[iDie] >= Limit[iDie])
-                                bBuela = false;
-                        }
-                    }
                 }
             }
             return bBuela;
